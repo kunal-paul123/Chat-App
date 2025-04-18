@@ -1,9 +1,11 @@
 import express from "express";
 import { connectDB } from "./utils/database.js";
 import dotenv from "dotenv";
-import userRoutes from "./routes/userRoutes.js";
 import { errorMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
+
+import userRoutes from "./routes/userRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 dotenv.config({
   path: "./.env",
@@ -22,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/user", userRoutes);
+app.use("/chat", chatRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World");

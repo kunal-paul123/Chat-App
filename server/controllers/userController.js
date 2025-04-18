@@ -5,7 +5,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../middlewares/utility.js";
 
 //create a new user
-const newUser = async (req, res) => {
+const newUser = TryCatch(async (req, res) => {
   const { name, userName, password, bio } = req.body;
 
   const avatar = {
@@ -22,7 +22,7 @@ const newUser = async (req, res) => {
   });
 
   sendToken(res, user, 201, "User created successfully");
-};
+});
 
 //login user
 const login = TryCatch(async (req, res, next) => {
@@ -65,4 +65,14 @@ const logout = TryCatch(async (req, res) => {
   });
 });
 
-export { newUser, login, getMyProfile, logout };
+//search user
+const searchUser = TryCatch(async (req, res, next) => {
+  const { name } = req.query;
+
+  return res.status(200).json({
+    success: true,
+    message: name,
+  });
+});
+
+export { newUser, login, getMyProfile, logout, searchUser };
