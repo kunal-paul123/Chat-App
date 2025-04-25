@@ -1,11 +1,15 @@
 import express from "express";
 import {
   addMembers,
+  deleteChat,
+  getChatDetails,
+  getMessages,
   getMyChats,
   getMyGroups,
   leaveGroup,
   newGroupChat,
   removeMember,
+  renameGroup,
   sendAttachments,
 } from "../controllers/chatController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
@@ -30,9 +34,14 @@ router
   .post(isAuthenticated, attachmentsMulter, sendAttachments);
 
 // Get Messages
+router.route("/message/:id").get(isAuthenticated, getMessages);
 
 // Get Chat Details, rename, delete
 
-// router.route("/:id").get().put().delete();
+router
+  .route("/:id")
+  .get(isAuthenticated, getChatDetails)
+  .put(isAuthenticated, renameGroup)
+  .delete(isAuthenticated, deleteChat);
 
 export default router;
