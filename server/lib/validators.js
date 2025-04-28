@@ -1,4 +1,4 @@
-import { body, check, param, validationResult } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 import { ErrorHandler } from "../middlewares/utility.js";
 
 const registerValidator = () => [
@@ -38,11 +38,6 @@ const removeMemberValidator = () => [
 
 const sendAttachmentsValidator = () => [
   body("chatId", "Please Enter Chat ID").notEmpty(),
-  check("files")
-    .notEmpty()
-    .withMessage("Please Upload Attchments")
-    .isArray({ min: 2, max: 100 })
-    .withMessage("Attchments must be 1-5"),
 ];
 
 const chatIdValidator = () => [param("id", "Please Enter Chat ID").notEmpty()];

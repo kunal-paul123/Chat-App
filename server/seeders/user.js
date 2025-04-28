@@ -1,13 +1,12 @@
-import { faker, SimpleFaker } from "@faker-js/faker";
+import { faker } from "@faker-js/faker";
 import { User } from "../models/userModel.js";
-import { Chat } from "../models/chatModel.js";
 
 const createUser = async (numUsers) => {
   try {
     const userPromise = [];
 
     for (let i = 0; i < numUsers; i++) {
-      const tempUser = User.create({
+      const tempUser = new User({
         name: faker.person.fullName(),
         username: faker.internet.username(),
         bio: faker.lorem.sentence(10),
@@ -18,7 +17,7 @@ const createUser = async (numUsers) => {
         },
       });
 
-      userPromise.push(tempUser);
+      userPromise.push(tempUser.save());
     }
 
     await Promise.all(userPromise);
@@ -31,12 +30,4 @@ const createUser = async (numUsers) => {
   }
 };
 
-
-
-export {
-  createUser,
-  createSingleChats,
-  createGroupChats,
-  craeteMessages,
-  craeteMessagesInAChat,
-};
+export { createUser };

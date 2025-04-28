@@ -13,6 +13,7 @@ dotenv.config({
 
 const mongoURI = process.env.MONGO_URI;
 const port = process.env.PORT || 3000;
+const envMode = process.env.NODE_ENV.trim();
 
 connectDB(mongoURI);
 
@@ -33,5 +34,5 @@ app.get("/", (req, res) => {
 app.use(errorMiddleware);
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port} in ${envMode} mode`);
 });
