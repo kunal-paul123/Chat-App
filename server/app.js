@@ -3,6 +3,12 @@ import { connectDB } from "./utils/database.js";
 import dotenv from "dotenv";
 import { errorMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
+import { Server } from "socket.io";
+import { v4 as uuid } from "uuid";
+import { createServer } from "http";
+import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
+import { getSockets } from "./lib/helper.js";
+import { Message } from "./models/messageModel.js";
 
 import userRoutes from "./routes/userRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
@@ -15,9 +21,15 @@ const mongoURI = process.env.MONGO_URI;
 const port = process.env.PORT || 3000;
 const envMode = process.env.NODE_ENV.trim();
 
+const userSocketIDs = new Map();
+
 connectDB(mongoURI);
 
 const app = express();
+const server = createServer(app);
+
+// Create a Socket.IO server instance and attach it to the HTTP server
+const io = new Server(server, {});
 
 //middlewares
 app.use(express.json());
@@ -31,8 +43,56 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
+io.on("connection", (socket) => {
+  const user = {
+    _id: "asdasd",
+    name: "kunal",
+  };
+  userSocketIDs.set(user._id.toString(), socket.id);
+  console.log(userSocketIDs);
+
+  socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
+    const messageForRealTime = {
+      content: message,
+      _id: uuid(),
+      sender: {
+        _id: user._id,
+        name: user.name,
+      },
+      chat: chatId,
+      createdAt: new Date().toISOString(),
+    };
+
+    const messageForDB = {
+      content: message,
+      sender: user._id,
+      chat: chatId,
+    };
+
+    const membersSocket = getSockets(members);
+    io.to(membersSocket).emit(NEW_MESSAGE, {
+      chatId,
+      message: messageForRealTime,
+    });
+    io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId });
+
+    try {
+      await Message.create(messageForDB);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    userSocketIDs.delete(user._id.toString());
+    console.log("user disconnected");
+  });
+});
+
 app.use(errorMiddleware);
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server running on port ${port} in ${envMode} mode`);
 });
+
+export { userSocketIDs };
