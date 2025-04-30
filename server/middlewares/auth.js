@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
 import { ErrorHandler } from "./utility.js";
+import { TryCatch } from "./error.js";
 
-const isAuthenticated = async (req, res, next) => {
+const isAuthenticated = TryCatch(async (req, res, next) => {
   const token = req.cookies["token"];
 
   if (!token)
@@ -12,6 +13,6 @@ const isAuthenticated = async (req, res, next) => {
   req.user = decodedData._id;
 
   next();
-};
+});
 
 export { isAuthenticated };
