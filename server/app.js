@@ -10,6 +10,7 @@ import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/events.js";
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/messageModel.js";
 import cors from "cors";
+import { v2 as cloudinary } from "cloudinary";
 
 import userRoutes from "./routes/userRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
@@ -25,6 +26,12 @@ const envMode = process.env.NODE_ENV.trim();
 const userSocketIDs = new Map();
 
 connectDB(mongoURI);
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const app = express();
 const server = createServer(app);

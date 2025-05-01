@@ -5,7 +5,7 @@ import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../middlewares/utility.js";
 import { Chat } from "../models/chatModel.js";
 import { Request } from "../models/requestModel.js";
-import { emitEvent } from "../utils/features.js";
+import { emitEvent, uploadFilesToCloudinary } from "../utils/features.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 
@@ -17,9 +17,11 @@ const newUser = TryCatch(async (req, res) => {
 
   if (!file) return next(new ErrorHandler("Please upload an image", 400));
 
+  const result = await uploadFilesToCloudinary([file]);
+
   const avatar = {
-    public_id: "sample_id",
-    url: "sample_url",
+    public_id: result[0].public_id,
+    url: result[0].url,
   };
 
   const user = await User.create({
