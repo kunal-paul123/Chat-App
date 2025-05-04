@@ -3,12 +3,12 @@ import React from "react";
 import Header from "./Header";
 import { Drawer, Grid, Skeleton } from "@mui/material";
 import ChatList from "../specific/ChatList";
-import { sampleChats } from "../../constants/sampleData";
 import { useParams } from "react-router-dom";
 import Profile from "../specific/Profile";
 import { useMyChatsQuery } from "../../redux/api/api";
 import { useSelector } from "react-redux";
 import { setIsMobileMenu } from "../../redux/reducers/misc";
+import { useErros } from "../../hooks/hook";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
@@ -18,10 +18,11 @@ const AppLayout = () => (WrappedComponent) => {
     const dispatch = useDispatch();
 
     const { isMobileMenu } = useSelector((state) => state.misc);
+    const { user } = useSelector((state) => state.auth);
 
     const { isLoading, isError, data, error, refetch } = useMyChatsQuery("");
 
-    console.log(data);
+    useErros([{ isError, error }]);
 
     const handleDeleteChat = (e, _id, groupChat) => {
       e.preventDefault();
@@ -90,7 +91,7 @@ const AppLayout = () => (WrappedComponent) => {
             height={"100%"}
             padding="2rem"
           >
-            <Profile />
+            <Profile user={user} />
           </Grid>
         </Grid>
       </>

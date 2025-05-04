@@ -10,7 +10,7 @@ import { NEW_REQUEST, REFETCH_CHATS } from "../constants/events.js";
 import { getOtherMember } from "../lib/helper.js";
 
 //create a new user
-const newUser = TryCatch(async (req, res) => {
+const newUser = TryCatch(async (req, res, next) => {
   const { name, username, password, bio } = req.body;
 
   const file = req.file;
@@ -107,7 +107,7 @@ const searchUser = TryCatch(async (req, res, next) => {
 });
 
 //send request
-const sendFriendRequest = TryCatch(async (req, res) => {
+const sendFriendRequest = TryCatch(async (req, res, next) => {
   const { userId } = req.body;
 
   if (!userId) return next(new ErrorHandler("Please Enter User ID", 400));
