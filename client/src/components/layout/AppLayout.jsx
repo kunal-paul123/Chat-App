@@ -9,6 +9,7 @@ import { useMyChatsQuery } from "../../redux/api/api";
 import { useSelector } from "react-redux";
 import { setIsMobileMenu } from "../../redux/reducers/misc";
 import { useErros } from "../../hooks/hook";
+import { getSocket } from "../../socket";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
@@ -16,6 +17,8 @@ const AppLayout = () => (WrappedComponent) => {
     const chatId = params.chatId; // Extract chatId from URL parameters
 
     const dispatch = useDispatch();
+
+    const socket = getSocket();
 
     const { isMobileMenu } = useSelector((state) => state.misc);
     const { user } = useSelector((state) => state.auth);
@@ -76,7 +79,7 @@ const AppLayout = () => (WrappedComponent) => {
             lg={6}
             height={"100%"}
           >
-            <WrappedComponent {...props} />
+            <WrappedComponent {...props} chatId={chatId}/>
           </Grid>
 
           {/* Third Grid (Sidebar) */}

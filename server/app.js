@@ -11,9 +11,11 @@ import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/messageModel.js";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
+import { socketAuhenticater } from "./middlewares/auth.js";
 
 import userRoutes from "./routes/userRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import corsOptions from "./constants/config.js";
 
 dotenv.config({
   path: "./.env",
@@ -37,22 +39,15 @@ const app = express();
 const server = createServer(app);
 
 // Create a Socket.IO server instance and attach it to the HTTP server
-const io = new Server(server, {});
+const io = new Server(server, {
+  cors: corsOptions,
+});
 
 //middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-      process.env.CLIENT_URL,
-    ],
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
 
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/chat", chatRoutes);
@@ -61,13 +56,18 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
+io.use((socket, next) => {
+  cookieParser()(
+    socket.request,
+    socket.request.res,
+    async (err) => await socketAuhenticater(err, socket, next)
+  );
+});
+
 io.on("connection", (socket) => {
-  const user = {
-    _id: "asdasd",
-    name: "kunal",
-  };
+  const user = socket.user;
+
   userSocketIDs.set(user._id.toString(), socket.id);
-  console.log(userSocketIDs);
 
   socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
     const messageForRealTime = {

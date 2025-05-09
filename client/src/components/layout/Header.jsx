@@ -22,7 +22,7 @@ import { server } from "../../constants/config";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { userNotExists } from "../../redux/reducers/auth";
-import { setIsMobileMenu, setIsSearch } from "../../redux/reducers/misc";
+import { setIsMobileMenu, setIsNotification, setIsSearch } from "../../redux/reducers/misc";
 
 const Search = lazy(() => import("../specific/Search"));
 const Notifications = lazy(() => import("../specific/Notifications"));
@@ -33,10 +33,9 @@ const Header = () => {
 
   const dispatch = useDispatch();
 
-  const { isSearch } = useSelector((state) => state.misc);
+  const { isSearch, isNotification } = useSelector((state) => state.misc);
 
   const [isNewGroup, setIsnewGroup] = useState(false);
-  const [isNotification, setIsNotification] = useState(false);
 
   const handleMobile = () => dispatch(setIsMobileMenu(true));
 
@@ -46,9 +45,7 @@ const Header = () => {
     setIsnewGroup((prev) => !prev);
   };
 
-  const openNotification = () => {
-    setIsNotification((prev) => !prev);
-  };
+  const openNotification = () => dispatch(setIsNotification(true));
 
   const NavigateToGroup = () => navigate("/groups");
 
