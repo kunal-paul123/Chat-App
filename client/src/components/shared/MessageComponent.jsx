@@ -9,6 +9,7 @@ const MessageComponent = ({ message, user }) => {
   const { content, sender, attachments = [], createdAt } = message;
 
   const sameSender = sender?._id === user?._id;
+
   const timeAgo = moment(createdAt).fromNow();
 
   const messageBg = sameSender ? "#e0f7fa" : "#f5f5f5";

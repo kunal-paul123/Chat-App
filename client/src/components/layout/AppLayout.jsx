@@ -79,7 +79,7 @@ const AppLayout = () => (WrappedComponent) => {
             lg={6}
             height={"100%"}
           >
-            <WrappedComponent {...props} chatId={chatId}/>
+            <WrappedComponent {...props} chatId={chatId} user={user} />
           </Grid>
 
           {/* Third Grid (Sidebar) */}

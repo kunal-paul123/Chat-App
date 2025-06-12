@@ -67,6 +67,8 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   const user = socket.user;
 
+  console.log(userSocketIDs);
+
   userSocketIDs.set(user._id.toString(), socket.id);
 
   socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
@@ -92,9 +94,15 @@ io.on("connection", (socket) => {
       chatId,
       message: messageForRealTime,
     });
+
+    socket.emit(NEW_MESSAGE, {
+      chatId,
+      message: messageForRealTime,
+    });
+
     io.to(membersSocket).emit(NEW_MESSAGE_ALERT, { chatId });
 
-    try {
+    try {4
       await Message.create(messageForDB);
     } catch (err) {
       console.log(err);
