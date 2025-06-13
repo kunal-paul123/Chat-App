@@ -73,7 +73,7 @@ const AppLayout = () => (WrappedComponent) => {
 
           {/* Main Content Grid */}
           <Grid
-            size={4} // 8 out of 12 columns
+            size={5} // 8 out of 12 columns
             sm={8}
             md={5}
             lg={6}
@@ -84,7 +84,7 @@ const AppLayout = () => (WrappedComponent) => {
 
           {/* Third Grid (Sidebar) */}
           <Grid
-            size={4} // 4 out of 12 columns
+            size={3} // 4 out of 12 columns
             // md={4}
             lg={3}
             sx={{
