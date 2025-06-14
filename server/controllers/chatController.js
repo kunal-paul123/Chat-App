@@ -1,6 +1,6 @@
 import {
   ALERT,
-  NEW_ATTACHMENT,
+  NEW_MESSAGE,
   NEW_MESSAGE_ALERT,
   REFETCH_CHATS,
 } from "../constants/events.js";
@@ -10,7 +10,11 @@ import { ErrorHandler } from "../middlewares/utility.js";
 import { Chat } from "../models/chatModel.js";
 import { Message } from "../models/messageModel.js";
 import { User } from "../models/userModel.js";
-import { deleteFilesFromCloudinary, emitEvent } from "../utils/features.js";
+import {
+  deleteFilesFromCloudinary,
+  emitEvent,
+  uploadFilesToCloudinary,
+} from "../utils/features.js";
 
 //create group chat
 const newGroupChat = TryCatch(async (req, res, next) => {
@@ -220,6 +224,8 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   const { chatId } = req.body;
   const files = req.files || [];
 
+  console.log(files);
+
   if (files.length < 1)
     return next(new ErrorHandler("Please Provide Attachments", 400));
 
@@ -235,7 +241,7 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   if (!chat) return next(new ErrorHandler("Chat not found", 404));
 
   // uploads files here
-  const attachments = [];
+  const attachments = await uploadFilesToCloudinary(files);
 
   const messageForDB = {
     content: "",
@@ -254,7 +260,7 @@ const sendAttachments = TryCatch(async (req, res, next) => {
 
   const message = await Message.create(messageForDB);
 
-  emitEvent(req, NEW_ATTACHMENT, chat.members, {
+  emitEvent(req, NEW_MESSAGE, chat.members, {
     message: messageForRealTime,
     chatId,
   });

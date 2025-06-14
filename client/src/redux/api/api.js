@@ -66,10 +66,19 @@ const api = createApi({
 
     getMessages: builder.query({
       query: ({ chatId, page }) => ({
-        url: `chat/message/${chatId}?page=${page}`,
+        url: `/chat/message/${chatId}?page=${page}`,
         credentials: "include",
       }),
       providesTags: ["Message"],
+    }),
+
+    sendAttachments: builder.mutation({
+      query: (data) => ({
+        url: "/chat/message",
+        method: "POST",
+        credentials: "include",
+        body: data,
+      }),
     }),
   }),
 });
@@ -83,4 +92,5 @@ export const {
   useAcceptFriendRequestMutation,
   useChatDetailsQuery,
   useGetMessagesQuery,
+  useSendAttachmentsMutation,
 } = api;

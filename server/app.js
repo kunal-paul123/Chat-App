@@ -43,6 +43,8 @@ const io = new Server(server, {
   cors: corsOptions,
 });
 
+app.set("io", io);
+
 //middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -1,9 +1,11 @@
 import { v2 as cloudinary } from "cloudinary";
 import { v4 as uuid } from "uuid";
-import { getBase64 } from "../lib/helper.js";
+import { getBase64, getSockets } from "../lib/helper.js";
 
 const emitEvent = (req, event, users, data) => {
-  console.log("Emiting event", event);
+  const io = req.app.get("io");
+  const userSocket = getSockets(users);
+  io.to(userSocket).emit(event, data);
 };
 
 const uploadFilesToCloudinary = async (files = []) => {

@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import React from "react";
+import React, { useCallback } from "react";
 import Header from "./Header";
 import { Drawer, Grid, Skeleton } from "@mui/material";
 import ChatList from "../specific/ChatList";
@@ -8,8 +8,9 @@ import Profile from "../specific/Profile";
 import { useMyChatsQuery } from "../../redux/api/api";
 import { useSelector } from "react-redux";
 import { setIsMobileMenu } from "../../redux/reducers/misc";
-import { useErros } from "../../hooks/hook";
+import { useErros, useSocketEvents } from "../../hooks/hook";
 import { getSocket } from "../../socket";
+import { NEW_MESSAGE_ALERT, NEW_REQUEST } from "../../constants/events";
 
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
@@ -35,6 +36,18 @@ const AppLayout = () => (WrappedComponent) => {
     const handleMobileClose = () => {
       dispatch(setIsMobileMenu(false));
     };
+
+    const newMessageAlertHandler = useCallback(() => {}, []);
+    
+    const newMessageHandler = useCallback(() => {}, []);
+
+    const eventHandlers = {
+      [NEW_MESSAGE_ALERT]: newMessageAlertHandler,
+      [NEW_REQUEST]: newMessageHandler,
+    };
+
+    useSocketEvents(socket, eventHandlers);
+
     return (
       <>
         <Header />
